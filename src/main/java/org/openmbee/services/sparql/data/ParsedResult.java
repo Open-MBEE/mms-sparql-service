@@ -9,7 +9,9 @@ public class ParsedResult {
 
     private Set<Pair<String, String>> toRead = new HashSet<>();
     private Set<Pair<String, String>> toModify = new HashSet<>();
-    private Set<Pair<String, String>> named = new HashSet<>(); //subset of toRead
+    private Set<Pair<String, String>> named = new HashSet<>(); //subset of toRead (from named, using named)
+
+    private Set<Pair<String, String>> defaults = new HashSet<>(); //subset of toRead (from, using, with)
     private Set<String> errors = new HashSet<>(); //uri that can't be parsed
     private boolean unsupported; //unsupported operation
 
@@ -55,8 +57,21 @@ public class ParsedResult {
         this.named = named;
     }
 
+    public Set<Pair<String, String>> getDefaults() {
+        return defaults;
+    }
+
+    public void setDefaults(
+        Set<Pair<String, String>> defaults) {
+        this.defaults = defaults;
+    }
+
     public void addToRead(Pair<String, String> add) {
         toRead.add(add);
+    }
+
+    public void addToDefaults(Pair<String, String> add) {
+        defaults.add(add);
     }
 
     public void addToModify(Pair<String, String> mod) {
@@ -73,6 +88,10 @@ public class ParsedResult {
 
     public boolean hasNamed() {
         return !named.isEmpty();
+    }
+
+    public boolean hasDefaults() {
+        return !defaults.isEmpty();
     }
 
     public boolean hasError() {
@@ -93,5 +112,9 @@ public class ParsedResult {
 
     public void addAllToError(Collection<String> e) {
         errors.addAll(e);
+    }
+
+    public void addAllToDefaults(Collection<Pair<String, String>> m) {
+        defaults.addAll(m);
     }
 }

@@ -1,8 +1,5 @@
 package org.openmbee.services.sparql.controllers;
 
-import java.util.Optional;
-import org.apache.commons.lang3.tuple.Pair;
-import org.openmbee.services.sparql.data.ParsedResult;
 import org.openmbee.services.sparql.services.Parser;
 import org.openmbee.services.sparql.services.Permission;
 import org.openmbee.services.sparql.services.Proxy;
@@ -29,12 +26,4 @@ public abstract class Base {
         this.proxy = proxy;
     }
 
-    protected void checkPermissions(ParsedResult result, Optional<String> auth){
-        for (Pair<String, String> toRead: result.getToRead()) {
-
-        }
-        for (Pair<String, String> toModify: result.getToModify()) {
-
-        }
-    }
 }

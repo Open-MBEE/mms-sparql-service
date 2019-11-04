@@ -1,0 +1,5 @@
+permission.lookup.endpoint=
+sparql.endpoint=
+uri.pattern=http://mms.openmbee.org/data/(?<projectId>[a-zA-Z0-9_-]+)/(?<refId>[a-zA-Z0-9_-]+)
+query.privilege=BRANCH_READ
+update.privilege=BRANCH_EDIT_CONTENT

@@ -32,9 +32,12 @@ public class QueryElementVisitor implements ElementVisitor {
 
     private Parser parser;
 
+    private boolean inNamedGraph;
+
     public QueryElementVisitor(ParsedResult result, Parser parser) {
         this.result = result;
         this.parser = parser;
+        inNamedGraph = false;
     }
 
     @Override
@@ -43,10 +46,10 @@ public class QueryElementVisitor implements ElementVisitor {
 
     @Override
     public void visit(ElementPathBlock el) {
-        if (result.getToRead().isEmpty()) {
+        if (!result.hasDefaults() && !inNamedGraph) {
             result.addToError("querying default graph not allowed");
             throw new SparqlException(result);
-        } //TODO this fails if a default graph block comes after a named graph with uri
+        }
     }
 
     @Override
@@ -81,7 +84,7 @@ public class QueryElementVisitor implements ElementVisitor {
     public void visit(ElementGroup el) {
         for (Element e: el.getElements()) {
             e.visit(this);
-        } //TODO may have to use separate results for each
+        }
     }
 
     @Override
@@ -106,7 +109,9 @@ public class QueryElementVisitor implements ElementVisitor {
             result.addToError("graph var cannot be used without named graph declared");
             throw new SparqlException(result);
         }
+        inNamedGraph = true;
         el.getElement().visit(this);
+        inNamedGraph = false;
     }
 
     @Override
@@ -133,6 +138,6 @@ public class QueryElementVisitor implements ElementVisitor {
     public void visit(ElementSubQuery el) {
         Query q = el.getQuery();
 
-        //TODO ??? make a new visitor with new parsed result or reuse this? does current default and named graphs inherit?
+        //TODO ??? make a new visitor instance with new parsed result or reuse this? does current default and named graphs inherit?
     }
 }

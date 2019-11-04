@@ -24,7 +24,8 @@ public class Update extends Base {
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseUpdate(update, using, named);
-        checkPermissions(result, auth);
+        permission.checkPermissions(result, auth);
+        proxy.sendUpdate(update, using, named);
         return null;
     }
 
@@ -36,7 +37,8 @@ public class Update extends Base {
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseUpdate(update, using, named);
-        checkPermissions(result, auth);
+        permission.checkPermissions(result, auth);
+        proxy.sendUpdate(update, using, named);
         return null;
     }
 }

@@ -25,7 +25,8 @@ public class Query extends Base {
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseQuery(query, defaults, named);
-        checkPermissions(result, auth);
+        permission.checkPermissions(result, auth);
+        proxy.sendQuery(query, defaults, named);
         return null;
     }
 
@@ -37,7 +38,8 @@ public class Query extends Base {
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseQuery(query, defaults, named);
-        checkPermissions(result, auth);
+        permission.checkPermissions(result, auth);
+        proxy.sendQuery(query, defaults, named);
         return null;
     }
 
@@ -49,7 +51,8 @@ public class Query extends Base {
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseQuery(query, defaults, named);
-        checkPermissions(result, auth);
+        permission.checkPermissions(result, auth);
+        proxy.sendQuery(query, defaults, named);
         return null;
     }
 }

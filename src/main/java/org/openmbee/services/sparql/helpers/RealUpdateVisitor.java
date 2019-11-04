@@ -11,7 +11,6 @@ import org.apache.jena.sparql.modify.request.UpdateBinaryOp;
 import org.apache.jena.sparql.modify.request.UpdateClear;
 import org.apache.jena.sparql.modify.request.UpdateCopy;
 import org.apache.jena.sparql.modify.request.UpdateCreate;
-import org.apache.jena.sparql.modify.request.UpdateData;
 import org.apache.jena.sparql.modify.request.UpdateDataDelete;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.sparql.modify.request.UpdateDeleteWhere;
@@ -85,28 +84,17 @@ public class RealUpdateVisitor implements UpdateVisitor {
 
     @Override
     public void visit(UpdateDataInsert update) {
-        handleUpdateData(update);
+        handleQuads(update.getQuads(), false);
     }
 
     @Override
     public void visit(UpdateDataDelete update) {
-        handleUpdateData(update);
+        handleQuads(update.getQuads(), false);
     }
 
     @Override
     public void visit(UpdateDeleteWhere update) {
-        for (Quad q: update.getQuads()) {
-            if (!(q.getGraph() instanceof Node_URI)) {
-                result.addToError("no graph specified in delete where");
-                throw new SparqlException(result);
-            }
-            Pair<String, String> uri = parser.parseNamedGraphUri(q.getGraph().getURI());
-            if (uri == null) {
-                result.addToError(q.getGraph().getURI());
-                throw new SparqlException(result);
-            }
-            result.addToModify(uri);
-        }
+        handleQuads(update.getQuads(), false);
     }
 
     @Override
@@ -125,20 +113,17 @@ public class RealUpdateVisitor implements UpdateVisitor {
             }
             result.addToModify(uri);
             whereClauseResult.addToRead(uri);
+            whereClauseResult.addToDefaults(uri);
             hasWith = true;
         }
+        whereClauseResult.addAllToDefaults(result.getDefaults());
         whereClauseResult.addAllToNamed(result.getNamed());
-        whereClauseResult.addAllToRead(result.getToRead());
         parser.handleGraphUriNodes(whereClauseResult, update.getUsing(), false);
         parser.handleGraphUriNodes(whereClauseResult, update.getUsingNamed(), true);
         update.getWherePattern().visit(new QueryElementVisitor(whereClauseResult, parser));
         result.addAllToRead(whereClauseResult.getToRead());
         handleQuads(update.getDeleteQuads(), hasWith);
         handleQuads(update.getInsertQuads(), hasWith);
-    }
-
-    private void handleUpdateData(UpdateData op) {
-        handleQuads(op.getQuads(), false);
     }
 
     private void handleQuads(List<Quad> quads, boolean hasWith) {

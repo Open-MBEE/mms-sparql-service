@@ -22,12 +22,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Parser {
 
-    private String pattern;
-
     private Pattern p;
 
     public Parser(@Value("${uri.pattern}") String pattern) {
-        this.pattern = pattern;
         this.p = Pattern.compile(pattern);
     }
 
@@ -41,7 +38,7 @@ public class Parser {
         Element e = q.getQueryPattern();
         e.visit(new QueryElementVisitor(res, this));
         if (res.getToRead().isEmpty()) {
-            res.addToError("no graph specified to query");
+            res.addToError("no graph(s) specified");
             throw new SparqlException(res);
         }
         return res;
@@ -60,12 +57,13 @@ public class Parser {
         for (Update op: u.getOperations()) {
             ParsedResult singleUpdate = new ParsedResult();
             singleUpdate.addAllToNamed(holder.getNamed());
-            singleUpdate.addAllToRead(holder.getToRead());
+            singleUpdate.addAllToDefaults(holder.getDefaults());
             RealUpdateVisitor v = new RealUpdateVisitor(singleUpdate, this);
             op.visit(v);
             res.addAllToRead(singleUpdate.getToRead());
             res.addAllToModify(singleUpdate.getToModify());
         }
+        res.addAllToRead(holder.getToRead());
         return res;
     }
 
@@ -85,15 +83,7 @@ public class Parser {
             return;
         }
         for (String uri: uris) {
-            Pair<String, String> pair = parseNamedGraphUri(uri);
-            if (pair == null) {
-                res.addToError(uri);
-                throw new SparqlException(res);
-            }
-            res.addToRead(pair);
-            if (named) {
-                res.addToNamed(pair);
-            }
+            handleUri(res, uri, named);
         }
     }
 
@@ -106,15 +96,21 @@ public class Parser {
                 res.addToError(uri.toString());
                 throw new SparqlException(res);
             }
-            Pair<String, String> pair = parseNamedGraphUri(uri.getURI());
-            if (pair == null) {
-                res.addToError(uri.getURI());
-                throw new SparqlException(res);
-            }
-            res.addToRead(pair);
-            if (named) {
-                res.addToNamed(pair);
-            }
+            handleUri(res, uri.getURI(), named);
+        }
+    }
+
+    private void handleUri(ParsedResult res, String uri, boolean named) {
+        Pair<String, String> pair = parseNamedGraphUri(uri);
+        if (pair == null) {
+            res.addToError(uri);
+            throw new SparqlException(res);
+        }
+        res.addToRead(pair);
+        if (named) {
+            res.addToNamed(pair);
+        } else {
+            res.addToDefaults(pair);
         }
     }
 }
