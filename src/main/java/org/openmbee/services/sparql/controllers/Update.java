@@ -21,12 +21,12 @@ public class Update extends Base {
             @RequestParam String update,
             @RequestParam(required = false, name = "using-graph-uri") List<String> using,
             @RequestParam(required = false, name = "using-named-graph-uri") List<String> named,
+            @RequestHeader(required = false, name = "Accept") String accept,
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseUpdate(update, using, named);
         permission.checkPermissions(result, auth);
-        proxy.sendUpdate(update, using, named);
-        return null;
+        return proxy.sendUpdate(update, using, named, accept);
     }
 
     @PostMapping(consumes = "application/sparql-update")
@@ -34,11 +34,11 @@ public class Update extends Base {
             @RequestBody String update,
             @RequestParam(required = false, name = "using-graph-uri") List<String> using,
             @RequestParam(required = false, name = "using-named-graph-uri") List<String> named,
+            @RequestHeader(required = false, name = "Accept") String accept,
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseUpdate(update, using, named);
         permission.checkPermissions(result, auth);
-        proxy.sendUpdate(update, using, named);
-        return null;
+        return proxy.sendUpdate(update, using, named, accept);
     }
 }

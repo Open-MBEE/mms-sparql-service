@@ -22,12 +22,12 @@ public class Query extends Base {
             @RequestParam String query,
             @RequestParam(required = false, name = "default-graph-uri") List<String> defaults,
             @RequestParam(required = false, name = "named-graph-uri") List<String> named,
+            @RequestHeader(required = false, name = "Accept") String accept,
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseQuery(query, defaults, named);
         permission.checkPermissions(result, auth);
-        proxy.sendQuery(query, defaults, named);
-        return null;
+        return proxy.sendQuery(query, defaults, named, accept);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, params = "query")
@@ -35,12 +35,12 @@ public class Query extends Base {
             @RequestParam String query,
             @RequestParam(required = false, name = "default-graph-uri") List<String> defaults,
             @RequestParam(required = false, name = "named-graph-uri") List<String> named,
+            @RequestHeader(required = false, name = "Accept") String accept,
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseQuery(query, defaults, named);
         permission.checkPermissions(result, auth);
-        proxy.sendQuery(query, defaults, named);
-        return null;
+        return proxy.sendQuery(query, defaults, named, accept);
     }
 
     @PostMapping(consumes = "application/sparql-query")
@@ -48,11 +48,11 @@ public class Query extends Base {
             @RequestBody String query,
             @RequestParam(required = false, name = "default-graph-uri") List<String> defaults,
             @RequestParam(required = false, name = "named-graph-uri") List<String> named,
+            @RequestHeader(required = false, name = "Accept") String accept,
             @RequestHeader(required = false, name = "Authorization") Optional<String> auth) {
 
         ParsedResult result = parser.parseQuery(query, defaults, named);
         permission.checkPermissions(result, auth);
-        proxy.sendQuery(query, defaults, named);
-        return null;
+        return proxy.sendQuery(query, defaults, named, accept);
     }
 }

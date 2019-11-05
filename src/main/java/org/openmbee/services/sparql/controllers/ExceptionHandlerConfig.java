@@ -2,6 +2,7 @@ package org.openmbee.services.sparql.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.jena.query.QueryParseException;
 import org.openmbee.services.sparql.exceptions.PermissionException;
 import org.openmbee.services.sparql.exceptions.SparqlException;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,12 @@ public class ExceptionHandlerConfig extends ResponseEntityExceptionHandler {
         Map<String, Object> messages = new HashMap<>();
         messages.put("messages", ex.getResult().getErrors());
         return handleExceptionInternal(ex, messages, new HttpHeaders(),
+            HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(value = {QueryParseException.class})
+    protected ResponseEntity<Object> handleQueryParseException(QueryParseException ex, WebRequest request) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(),
             HttpStatus.BAD_REQUEST, request);
     }
 
