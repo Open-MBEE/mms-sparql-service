@@ -36,7 +36,7 @@ public class ExceptionHandlerConfig extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {PermissionException.class})
     protected ResponseEntity<Object> handlePermissioinException(PermissionException ex, WebRequest request) {
-        return handleExceptionInternal(ex, "Permission Error", new HttpHeaders(),
+        return handleExceptionInternal(ex, ex.getResult(), new HttpHeaders(),
             HttpStatus.FORBIDDEN, request);
     }
 }
