@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -51,5 +52,16 @@ public class SparqlService {
                 .contact(new Contact("OpenMBEE", "http://www.openmbee.org",
                         ""))
                 .license("Apache License Version 2.0").licenseUrl("").version("2.0").build();
+    }
+
+    @Bean
+    public CommonsRequestLoggingFilter logFilter() {
+        CommonsRequestLoggingFilter filter
+            = new CommonsRequestLoggingFilter();
+        filter.setIncludeQueryString(true);
+        filter.setIncludePayload(true);
+        filter.setMaxPayloadLength(10000);
+        filter.setIncludeHeaders(false);
+        return filter;
     }
 }
